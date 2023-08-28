@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data// this is from lombok and gives us getter, setter and tostring
 @Builder // allow us to build the object using builder pattern
 //@NoArgsConstructor
-
+//@RequiredArgsConstructor
 @Entity(name = "User")
 @Table(name = "tblUser")
 public class User implements UserDetails {
@@ -93,6 +94,17 @@ public class User implements UserDetails {
     )
     public boolean isEnabled;
 
+    public User(String firstName, String lastName, String email, String password, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+    public User(){
+
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -134,4 +146,51 @@ public class User implements UserDetails {
 //        this.email = email;
 //        this.password = password;
 //    }
+
+    public static UserBuilder builder(){
+        return new UserBuilder();
+    }
+    public static class UserBuilder{
+        public String firstName;
+        public String lastName;
+        public String email;
+        public String password;
+        public Role role;
+
+        public UserBuilder(){
+
+        }
+        public UserBuilder setFirstName(String firstName){
+            this.firstName = firstName;
+            return this;
+        }
+        public UserBuilder setLastName(String lastName){
+            this.lastName = lastName;
+            return this;
+        }
+
+        public UserBuilder setEmail(String email){
+            this.email = email;
+            return this;
+        }
+        public UserBuilder setPassword(String password){
+            this.password = password;
+            return this;
+        }
+        public UserBuilder setRole(Role role){
+            this.role = role;
+            return this;
+        }
+
+        public User build(){
+            return  new User(
+                    this.firstName,
+                    this.lastName,
+                    this.email,
+                    this.password,
+                    this.role
+            );
+        }
+
+    }
 }
